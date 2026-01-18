@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaGoogle, FaEnvelope, FaLock, FaArrowRight } from 'react-icons/fa';
+import { FaEnvelope, FaLock, FaArrowRight } from 'react-icons/fa';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,8 +16,9 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     const res = await signIn("credentials", { email, password, redirect: false });
+    
     if (res?.error) {
-      alert("Login Failed");
+      alert("Login Failed: " + res.error);
       setLoading(false);
     } else {
       router.push("/feed");
@@ -73,19 +74,6 @@ export default function Login() {
             {loading ? "Loading..." : <>Login <FaArrowRight /></>}
           </button>
         </form>
-
-        <div className="my-8 flex items-center gap-4">
-          <div className="h-px bg-gray-800 flex-1" />
-          <span className="text-gray-500 text-xs uppercase font-bold">Or</span>
-          <div className="h-px bg-gray-800 flex-1" />
-        </div>
-
-        <button 
-          onClick={() => signIn('google', { callbackUrl: '/feed' })}
-          className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-3"
-        >
-          <FaGoogle className="text-red-600" /> Continue with Google
-        </button>
 
         <p className="mt-8 text-center text-gray-500 text-sm">
           No account? <Link href="/register" className="text-indigo-400 font-bold hover:underline">Create one</Link>
