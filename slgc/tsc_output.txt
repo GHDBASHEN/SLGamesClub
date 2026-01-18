@@ -1,0 +1,4 @@
+﻿.next/types/validator.ts(138,39): error TS2306: File 'D:/Projects/Next Js/SLGamesClub/slgc/app/layout.tsx' is not a module.
+components/PostCard.tsx(4,36): error TS7031: Binding element 'post' implicitly has an 'any' type.
+components/PostCard.tsx(6,37): error TS2339: Property 'role' does not exist on type '{ id: string; name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; }'.
+components/PostCard.tsx(18,44): error TS2304: Cannot find name 'deletePost'.

@@ -22,6 +22,12 @@ export async function createPost(formData: FormData) {
     revalidatePath('/'); // Refresh feed
 }
 
+export async function deletePost(postId: string) {
+    await connectDB();
+    await Post.findByIdAndDelete(postId);
+    revalidatePath('/');
+}
+
 export async function updateProfile(email: string, newBio: string, games: string) {
     await connectDB();
     const gamesArray = games.split(',').map(g => g.trim());
