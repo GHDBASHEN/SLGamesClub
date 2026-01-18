@@ -1,2 +1,2 @@
 # SLGamesClub
-Creating Srilankan Computer and Mobile Games Club
+Srilankan Computer and Mobile Games Club
