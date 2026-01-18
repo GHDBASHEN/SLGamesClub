@@ -1,54 +1,96 @@
 'use client';
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { FaGoogle, FaEnvelope, FaLock, FaArrowRight } from 'react-icons/fa';
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const res = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const res = await signIn("credentials", { email, password, redirect: false });
+    if (res?.error) {
+      alert("Login Failed");
+      setLoading(false);
+    } else {
+      router.push("/feed");
+    }
+  };
 
-        if (res?.error) {
-            setError(res.error);
-        } else {
-            router.push("/profile");
-        }
-    };
+  return (
+    <div className="min-h-screen flex items-center justify-center relative bg-black overflow-hidden">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
+      </div>
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-950">
-            <div className="bg-gray-900 p-8 rounded-lg border border-gray-800 w-96">
-                <h1 className="text-2xl font-bold text-white mb-6">Login</h1>
-
-                {error && <div className="bg-red-500/20 text-red-400 p-2 text-sm rounded mb-4">{error}</div>}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <input
-                        type="text"
-                        placeholder="Email or Username"
-                        className="w-full p-2 bg-gray-800 rounded text-white"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="w-full p-2 bg-gray-800 rounded text-white"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button className="w-full bg-indigo-600 p-2 rounded text-white hover:bg-indigo-500">
-                        Login
-                    </button>
-                </form>
-            </div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="relative z-10 w-full max-w-md p-10 bg-gray-900 rounded-3xl shadow-2xl shadow-black/80"
+      >
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-black text-white mb-2">Welcome Back</h1>
+          <p className="text-gray-400">Login to continue your streak.</p>
         </div>
-    );
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="relative">
+            <FaEnvelope className="absolute left-4 top-4 text-gray-500" />
+            <input 
+              type="email" 
+              placeholder="Email Address" 
+              required
+              className="w-full bg-gray-800 text-white pl-12 pr-4 py-4 rounded-xl focus:bg-gray-700 transition-colors placeholder-gray-500"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="relative">
+            <FaLock className="absolute left-4 top-4 text-gray-500" />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              required
+              className="w-full bg-gray-800 text-white pl-12 pr-4 py-4 rounded-xl focus:bg-gray-700 transition-colors placeholder-gray-500"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
+          >
+            {loading ? "Loading..." : <>Login <FaArrowRight /></>}
+          </button>
+        </form>
+
+        <div className="my-8 flex items-center gap-4">
+          <div className="h-px bg-gray-800 flex-1" />
+          <span className="text-gray-500 text-xs uppercase font-bold">Or</span>
+          <div className="h-px bg-gray-800 flex-1" />
+        </div>
+
+        <button 
+          onClick={() => signIn('google', { callbackUrl: '/feed' })}
+          className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-3"
+        >
+          <FaGoogle className="text-red-600" /> Continue with Google
+        </button>
+
+        <p className="mt-8 text-center text-gray-500 text-sm">
+          No account? <Link href="/register" className="text-indigo-400 font-bold hover:underline">Create one</Link>
+        </p>
+      </motion.div>
+    </div>
+  );
 }
