@@ -10,10 +10,10 @@ const transporter = nodemailer.createTransport({
 
 export async function sendVerificationEmail(email: string, token: string) {
     const domain = process.env.NEXTAUTH_URL || 'https://www.slclub.games:3000';
-    const verifyLink = `${domain}/verify-email?token=${token}`;
+    const verifyLink = `https://www.slclub.games/verify-email?token=${token}`;
 
     const mailOptions = {
-        from: '"GameHub Support" <your-email@gmail.com>',
+        from: '"GameHub Support" <[EMAIL_ADDRESS]>',
         to: email,
         subject: 'Verify your GameHub Account',
         html: `
