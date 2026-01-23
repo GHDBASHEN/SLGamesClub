@@ -1,119 +1,107 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FaGamepad, FaHome, FaTrophy, FaUser, FaSignInAlt } from 'react-icons/fa';
+import { cn } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 export default function Navbar() {
-  const { data: session } = useSession();
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
-  // Hide Navbar on login/register pages
-  if (pathname === '/login' || pathname === '/register') return null;
+  const navItems = [
+    { name: 'Home', href: '/', icon: FaHome },
+    { name: 'Feed', href: '/feed', icon: FaGamepad },
+    { name: 'Tournaments', href: '/tournaments', icon: FaTrophy },
+  ];
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-xl shadow-2xl shadow-black/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="glass-card rounded-2xl px-6 py-3 flex items-center justify-between shadow-lg shadow-primary/10">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <span className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 rounded-lg group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/30">
-              🎮
-            </span>
-            <span className="text-xl font-bold tracking-tight text-white">
-              SL Games Club
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-glow group-hover:shadow-glow-lg transition-all duration-300">
+              <span className="font-gaming font-bold text-white text-xl">SL</span>
+            </div>
+            <span className="font-gaming font-bold text-lg hidden sm:block tracking-wider group-hover:text-primary transition-colors">
+              GAMES CLUB
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <NavLink href="/" active={pathname === '/'}>Home</NavLink>
-            <NavLink href="/feed" active={pathname === '/feed'}>Feed</NavLink>
-            {session && <NavLink href="/create" active={pathname === '/create'}>Post</NavLink>}
-          </div>
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center gap-4">
-            {session ? (
-              <div className="flex items-center gap-4 pl-4 border-l border-gray-800">
-                <Link href="/profile" className="flex items-center gap-3 hover:opacity-80 transition">
-                   <img 
-                     src={session.user?.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=Gamer"} 
-                     className="w-9 h-9 rounded-full bg-gray-800" 
-                     alt="Profile"
-                   />
-                   <div className="text-sm">
-                     <p className="font-bold leading-none">{session.user?.name}</p>
-                     <p className="text-xs text-indigo-400">Online</p>
-                   </div>
-                </Link>
-                <button 
-                  onClick={() => signOut()} 
-                  className="text-sm text-gray-400 hover:text-white transition"
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "relative px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium transition-all duration-300",
+                    isActive
+                      ? "text-white bg-white/10 shadow-inner"
+                      : "text-muted-foreground hover:text-white hover:bg-white/5"
+                  )}
                 >
-                  Logout
-                </button>
-              </div>
+                  <Icon className={cn("text-lg", isActive && "text-primary")} />
+                  {item.name}
+                  {isActive && (
+                    <motion.div
+                      layoutId="navbar-indicator"
+                      className="absolute inset-0 rounded-xl bg-white/5 border border-white/10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Auth Actions */}
+          <div className="flex items-center gap-3">
+            {session ? (
+              <Link href="/profile">
+                <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+                  <div className="text-right hidden sm:block">
+                    <div className="text-sm font-bold text-white">{session.user?.name || 'Gamer'}</div>
+                    <div className="text-xs text-primary">Level 1</div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-muted border border-white/10 overflow-hidden relative group cursor-pointer hover:border-primary transition-colors">
+                    {session.user?.image ? (
+                      <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                        <FaUser className="text-gray-400 group-hover:text-white transition-colors" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Link>
             ) : (
-              <div className="flex items-center gap-4">
-                <Link href="/login" className="text-sm font-bold text-gray-300 hover:text-white transition">
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/login"
+                  className="hidden sm:flex px-5 py-2.5 rounded-xl text-sm font-bold text-white/80 hover:text-white hover:bg-white/5 transition-all"
+                >
                   Log In
                 </Link>
-                <Link href="/register" className="px-6 py-2.5 text-sm font-bold bg-indigo-600 rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20 transform hover:-translate-y-0.5">
-                  Join Now
+                <Link
+                  href="/register"
+                  className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-glow hover:shadow-glow-lg transition-all flex items-center gap-2"
+                >
+                  <span>Join Club</span>
+                  <FaSignInAlt />
                 </Link>
               </div>
             )}
           </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-300 p-2">
-              {isOpen ? "✕" : "☰"}
-            </button>
-          </div>
         </div>
       </div>
-
-      {/* Mobile Dropdown */}
-      {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="md:hidden bg-gray-900 border-t border-gray-800 p-4 space-y-4 shadow-xl"
-        >
-          <MobileLink href="/">Home</MobileLink>
-          <MobileLink href="/feed">Feed</MobileLink>
-          {session ? (
-            <>
-              <MobileLink href="/profile">Profile</MobileLink>
-              <MobileLink href="/create">Create Post</MobileLink>
-              <button onClick={() => signOut()} className="block w-full text-left text-red-400 font-bold py-2">Logout</button>
-            </>
-          ) : (
-            <>
-              <MobileLink href="/login">Log In</MobileLink>
-              <MobileLink href="/register">Register</MobileLink>
-            </>
-          )}
-        </motion.div>
-      )}
-    </nav>
+    </header>
   );
-}
-
-function NavLink({ href, active, children }: any) {
-  return (
-    <Link href={href} className={`text-sm font-bold transition-colors ${active ? "text-white" : "text-gray-400 hover:text-white"}`}>
-      {children}
-    </Link>
-  );
-}
-
-function MobileLink({ href, children }: any) {
-  return <Link href={href} className="block text-base font-bold text-gray-300 hover:text-white py-2">{children}</Link>;
 }

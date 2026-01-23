@@ -16,7 +16,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     const res = await signIn("credentials", { email, password, redirect: false });
-    
+
     if (res?.error) {
       alert("Login Failed: " + res.error);
       setLoading(false);
@@ -26,57 +26,57 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative bg-black overflow-hidden">
-      {/* Background Blobs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
+    <div className="min-h-screen flex items-center justify-center relative bg-background overflow-hidden">
+      {/* Background Blobs - using standard colors */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px]" />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative z-10 w-full max-w-md p-10 bg-gray-900 rounded-3xl shadow-2xl shadow-black/80"
+        className="relative z-10 w-full max-w-md p-8 glass-card rounded-2xl shadow-xl"
       >
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-black text-white mb-2">Welcome Back</h1>
-          <p className="text-gray-400">Login to continue your streak.</p>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-black text-white mb-2 font-gaming tracking-wide">Welcome Back</h1>
+          <p className="text-muted-foreground">Login to continue your streak.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
-            <FaEnvelope className="absolute left-4 top-4 text-gray-500" />
-            <input 
-              type="email" 
-              placeholder="Email Address" 
+            <FaEnvelope className="absolute left-4 top-4 text-muted-foreground" />
+            <input
+              type="email"
+              placeholder="Email Address"
               required
-              className="w-full bg-gray-800 text-white pl-12 pr-4 py-4 rounded-xl focus:bg-gray-700 transition-colors placeholder-gray-500"
+              className="w-full bg-black/50 border border-white/10 text-white pl-12 pr-4 py-3 rounded-xl focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50 outline-none"
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div className="relative">
-            <FaLock className="absolute left-4 top-4 text-gray-500" />
-            <input 
-              type="password" 
-              placeholder="Password" 
+            <FaLock className="absolute left-4 top-4 text-muted-foreground" />
+            <input
+              type="password"
+              placeholder="Password"
               required
-              className="w-full bg-gray-800 text-white pl-12 pr-4 py-4 rounded-xl focus:bg-gray-700 transition-colors placeholder-gray-500"
+              className="w-full bg-black/50 border border-white/10 text-white pl-12 pr-4 py-3 rounded-xl focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50 outline-none"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
-            className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
+            className="w-full py-3.5 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-bold rounded-xl shadow-lg shadow-primary/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
           >
             {loading ? "Loading..." : <>Login <FaArrowRight /></>}
           </button>
         </form>
 
-        <p className="mt-8 text-center text-gray-500 text-sm">
-          No account? <Link href="/register" className="text-indigo-400 font-bold hover:underline">Create one</Link>
+        <p className="mt-6 text-center text-muted-foreground text-sm">
+          No account? <Link href="/register" className="text-primary font-bold hover:underline hover:text-primary-glow transition-colors">Create one</Link>
         </p>
       </motion.div>
     </div>

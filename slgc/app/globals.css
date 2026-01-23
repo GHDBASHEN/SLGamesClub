@@ -1,31 +1,113 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;800;900&display=swap');
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-rgb: 3, 7, 18; /* Deep Space Black */
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@layer base {
+  :root {
+    /* Base Colors - Deep Space Theme */
+    --background: 222 47% 4%;
+    --foreground: 210 40% 98%;
+
+    /* Card with glass effect */
+    --card: 222 47% 7%;
+    --card-foreground: 210 40% 98%;
+
+    /* Popover */
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Primary - Indigo */
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 239 84% 67%;
+
+    /* Secondary - Purple */
+    --secondary: 270 60% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent - Pink/Magenta */
+    --accent: 326 80% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Muted */
+    --muted: 217 33% 12%;
+    --muted-foreground: 215 20% 55%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Status Colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+    --online: 142 76% 45%;
+
+    /* Borders & Input */
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 239 84% 67%;
+
+    --radius: 0.75rem;
+
+    /* Gaming-specific gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(270 60% 50%));
+    --gradient-accent: linear-gradient(135deg, hsl(270 60% 50%), hsl(326 80% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(239 84% 67%), hsl(270 60% 55%), hsl(326 80% 60%));
+    --gradient-card: linear-gradient(135deg, hsl(222 47% 8%), hsl(222 47% 6%));
+
+    /* Shadows */
+    --shadow-glow: 0 0 60px -15px hsl(239 84% 67% / 0.5);
+    --shadow-card: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
+  }
+
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 98%;
+    /* ... keep values same for dark theme as this is a dark-first design */
+  }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  overflow-x: hidden; /* Prevents horizontal scroll from background blobs */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Custom Gaming Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
 }
 
-/* Remove default blue outlines on inputs */
-input:focus, button:focus {
-  outline: none;
-}
+@layer components {
+  .gaming-text-gradient {
+    @apply text-transparent bg-clip-text;
+    background-image: var(--gradient-hero);
+  }
 
-/* Custom Scrollbar for Chrome/Safari */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #020617;
-}
-::-webkit-scrollbar-thumb {
-  background: #4f46e5;
-  border-radius: 4px;
+  .glass-card {
+    @apply backdrop-blur-xl border border-white/10;
+    background: hsl(var(--card) / 0.7);
+  }
+
+  .font-gaming {
+    font-family: 'Orbitron', sans-serif;
+  }
 }

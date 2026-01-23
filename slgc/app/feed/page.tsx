@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/db";
 import { Post } from "@/models/Post";
 
+export const dynamic = 'force-dynamic';
+
 export default async function FeedPage() {
     await connectDB();
     const posts = await Post.find().populate('author').sort({ createdAt: -1 });
@@ -13,7 +15,7 @@ export default async function FeedPage() {
                     <p className="text-gray-400">See what's happening in SL gaming</p>
                 </div>
             </div>
-            
+
             {posts.length === 0 ? (
                 <div className="text-center text-gray-500 py-20 bg-gray-900/50 rounded-3xl">
                     <p>No posts yet. Be the first to share a moment!</p>
@@ -22,9 +24,9 @@ export default async function FeedPage() {
                 posts.map((post) => (
                     <div key={post._id} className="bg-gray-900 p-6 mb-6 rounded-3xl shadow-xl hover:shadow-2xl transition duration-300">
                         <div className="flex items-center gap-4 mb-4">
-                            <img 
-                                src={post.author?.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} 
-                                className="w-12 h-12 rounded-full bg-gray-800 object-cover" 
+                            <img
+                                src={post.author?.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
+                                className="w-12 h-12 rounded-full bg-gray-800 object-cover"
                                 alt="Author"
                             />
                             <div>
@@ -39,15 +41,15 @@ export default async function FeedPage() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <p className="text-gray-200 mb-4 text-lg leading-relaxed">{post.content}</p>
-                        
+
                         {post.imageUrl && (
                             <div className="overflow-hidden rounded-2xl bg-black">
                                 <img src={post.imageUrl} alt="Post Content" className="w-full h-auto object-cover hover:scale-[1.02] transition duration-500" />
                             </div>
                         )}
-                        
+
                         {/* Interaction Bar (Visual Only for now) */}
                         <div className="flex gap-6 mt-4 pt-4 border-t border-gray-800/50 text-gray-400">
                             <button className="hover:text-pink-500 transition">❤️ Like</button>
