@@ -2,7 +2,8 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import Link from "next/link";
 
-export default async function VerifyEmailPage({ searchParams }: { searchParams: { token: string } }) {
+export default async function VerifyEmailPage(props: { searchParams: Promise<{ token: string }> }) {
+    const searchParams = await props.searchParams;
     const token = searchParams.token;
 
     if (!token) return <div className="p-10 text-red-500">Invalid Token</div>;
