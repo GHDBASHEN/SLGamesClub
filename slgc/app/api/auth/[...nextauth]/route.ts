@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     // 1. Credentials Login (Email & Password)
     CredentialsProvider({
@@ -34,14 +34,14 @@ const handler = NextAuth({
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
         token.role = user.role;
         token.id = user._id;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (session?.user) {
         session.user.role = token.role;
         session.user.id = token.id as string;
@@ -53,7 +53,9 @@ const handler = NextAuth({
     signIn: '/login',
     error: '/login',
   },
-  session: { strategy: "jwt" }
-});
+  session: { strategy: "jwt" as const } // Ensure "jwt" is treated as the correct literal type
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

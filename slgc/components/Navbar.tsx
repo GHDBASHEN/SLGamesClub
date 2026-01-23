@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { FaGamepad, FaHome, FaTrophy, FaUser, FaSignInAlt } from 'react-icons/fa';
+import { FaGamepad, FaHome, FaTrophy, FaUser, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -65,23 +65,32 @@ export default function Navbar() {
           {/* Auth Actions */}
           <div className="flex items-center gap-3">
             {session ? (
-              <Link href="/profile">
-                <div className="flex items-center gap-3 pl-4 border-l border-white/10">
-                  <div className="text-right hidden sm:block">
-                    <div className="text-sm font-bold text-white">{session.user?.name || 'Gamer'}</div>
-                    <div className="text-xs text-primary">Level 1</div>
+              <div className="flex items-center gap-4">
+                <Link href="/profile">
+                  <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+                    <div className="text-right hidden sm:block">
+                      <div className="text-sm font-bold text-white">{session.user?.name || 'Gamer'}</div>
+                      <div className="text-xs text-primary">Level 1</div>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-muted border border-white/10 overflow-hidden relative group cursor-pointer hover:border-primary transition-colors">
+                      {session.user?.image ? (
+                        <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                          <FaUser className="text-gray-400 group-hover:text-white transition-colors" />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-muted border border-white/10 overflow-hidden relative group cursor-pointer hover:border-primary transition-colors">
-                    {session.user?.image ? (
-                      <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                        <FaUser className="text-gray-400 group-hover:text-white transition-colors" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Link>
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/10 text-white/70 hover:text-red-500 transition-all border border-transparent hover:border-red-500/20"
+                  title="Sign Out"
+                >
+                  <FaSignOutAlt />
+                </button>
+              </div>
             ) : (
               <div className="flex items-center gap-3">
                 <Link
