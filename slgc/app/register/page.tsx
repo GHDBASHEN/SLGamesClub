@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaLock, FaRocket } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaRocket, FaCheckCircle } from 'react-icons/fa';
 
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +28,7 @@ export default function Register() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push("/login?registered=true");
+        setSuccess(true);
       } else {
         setError(data.error || "Registration failed");
       }
@@ -37,6 +38,39 @@ export default function Register() {
       setLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center relative bg-background overflow-hidden p-4">
+        {/* Background Blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[128px]" />
+          <div className="absolute bottom-1/4 left-1/4 w-[600px] h-[600px] bg-accent/20 rounded-full blur-[128px]" />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 w-full max-w-md p-8 glass-card rounded-2xl shadow-xl text-center"
+        >
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center">
+              <FaCheckCircle className="text-4xl text-green-500" />
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-bold mb-4 gaming-text-gradient">Registration Successful!</h2>
+          <p className="text-muted-foreground mb-8">
+            Please check your inbox (and spam folder) for a verification link to activate your account.
+          </p>
+
+          <Link href="/login" className="block w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition-all">
+            Go to Login
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center relative bg-background overflow-hidden">
