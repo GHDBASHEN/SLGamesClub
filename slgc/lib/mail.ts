@@ -13,7 +13,7 @@ export async function sendVerificationEmail(email: string, token: string) {
     const verifyLink = `https://www.slclub.games/verify-email?token=${token}`;
 
     const mailOptions = {
-        from: '"GameHub Support" <[EMAIL_ADDRESS]>',
+        from: '"GameHub Support" <your-email@gmail.com>',
         to: email,
         subject: 'Verify your GameHub Account',
         html: `
