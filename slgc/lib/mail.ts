@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendVerificationEmail(email: string, token: string) {
-    const domain = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const domain = process.env.NEXTAUTH_URL || 'https://www.slclub.games:3000';
     const verifyLink = `${domain}/verify-email?token=${token}`;
 
     const mailOptions = {
