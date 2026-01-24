@@ -16,6 +16,16 @@ const TournamentSchema = new Schema(
             enum: ["upcoming", "open", "ongoing", "completed"],
             default: "upcoming",
         },
+
+        // New Fields
+        organizer: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        participants: [{ type: Schema.Types.ObjectId, ref: "User" }], // Array of Users registered
+        winners: [{
+            rank: Number, // 1, 2, 3
+            teamName: String,
+            details: String
+        }],
+        rules: { type: String },
     },
     { timestamps: true }
 );
