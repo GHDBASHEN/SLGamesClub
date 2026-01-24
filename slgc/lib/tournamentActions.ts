@@ -26,7 +26,7 @@ export async function createTournament(formData: FormData, imageUrl: string) {
     const maxTeams = formData.get('maxTeams');
     const rules = formData.get('rules');
 
-    await Tournament.create({
+    const newTournament = await Tournament.create({
         title,
         description,
         game,
@@ -41,6 +41,7 @@ export async function createTournament(formData: FormData, imageUrl: string) {
     });
 
     revalidatePath('/tournaments');
+    return newTournament._id.toString();
 }
 
 export async function registerForTournament(tournamentId: string) {

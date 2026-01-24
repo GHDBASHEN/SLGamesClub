@@ -5,16 +5,27 @@ import { CldUploadWidget } from 'next-cloudinary';
 import { createTournament } from '@/lib/tournamentActions';
 import { FaImage } from 'react-icons/fa';
 
+import { useRouter } from 'next/navigation';
+
 export default function TournamentForm() {
     const [imageUrl, setImageUrl] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     return (
         <form
             action={async (formData) => {
                 setLoading(true);
-                await createTournament(formData, imageUrl);
-                setLoading(false);
+                try {
+                    const newId = await createTournament(formData, imageUrl);
+                    if (newId) {
+                        router.push(`/tournaments/${newId}`);
+                    }
+                } catch (error) {
+                    alert("Failed to create tournament. Please check your inputs.");
+                } finally {
+                    setLoading(false);
+                }
             }}
             className="space-y-6"
         >
