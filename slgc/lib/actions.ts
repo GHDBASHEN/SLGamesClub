@@ -60,10 +60,72 @@ export async function addComment(postId: string, content: string) {
     revalidatePath('/feed');
 }
 
+export async function editPost(postId: string, newContent: string) {
+    await connectDB();
+    const session = await getServerSession();
+    if (!session || !session.user?.email) throw new Error("Unauthorized");
+
+    const user = await User.findOne({ email: session.user.email });
+    const post = await Post.findById(postId);
+    if (!post) throw new Error("Post not found");
+
+    if (post.author.toString() !== user._id.toString()) {
+        throw new Error("Forbidden");
+    }
+
+    await Post.findByIdAndUpdate(postId, { content: newContent });
+    revalidatePath('/feed');
+}
+
+export async function editComment(commentId: string, newContent: string) {
+    await connectDB();
+    const session = await getServerSession();
+    if (!session || !session.user?.email) throw new Error("Unauthorized");
+
+    const user = await User.findOne({ email: session.user.email });
+    const comment = await Comment.findById(commentId);
+    if (!comment) throw new Error("Comment not found");
+
+    if (comment.author.toString() !== user._id.toString()) {
+        throw new Error("Forbidden");
+    }
+
+    await Comment.findByIdAndUpdate(commentId, { content: newContent });
+    revalidatePath('/feed');
+}
+
 export async function deletePost(postId: string) {
     await connectDB();
+    const session = await getServerSession();
+    if (!session || !session.user?.email) throw new Error("Unauthorized");
+
+    const user = await User.findOne({ email: session.user.email });
+    const post = await Post.findById(postId);
+    if (!post) throw new Error("Post not found");
+
+    if (post.author.toString() !== user._id.toString() && user.role !== "admin") {
+        throw new Error("Forbidden");
+    }
+
     await Post.findByIdAndDelete(postId);
-    revalidatePath('/');
+    revalidatePath('/feed');
+}
+
+export async function deleteComment(commentId: string) {
+    await connectDB();
+    const session = await getServerSession();
+    if (!session || !session.user?.email) throw new Error("Unauthorized");
+
+    const user = await User.findOne({ email: session.user.email });
+    const comment = await Comment.findById(commentId);
+    if (!comment) throw new Error("Comment not found");
+
+    if (comment.author.toString() !== user._id.toString() && user.role !== "admin") {
+        throw new Error("Forbidden");
+    }
+
+    await Comment.findByIdAndDelete(commentId);
+    revalidatePath('/feed');
 }
 
 export async function updateProfile(email: string, newBio: string, games: string, image?: string) {
