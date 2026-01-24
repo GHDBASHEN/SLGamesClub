@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
-import { updateUserRole } from "@/lib/adminActions";
+import { updateUserRole, toggleUserVerification } from "@/lib/adminActions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -48,7 +48,8 @@ export default async function AdminDashboard() {
               <tr>
                 <th className="p-5 font-medium">User Details</th>
                 <th className="p-5 font-medium">Current Role</th>
-                <th className="p-5 font-medium">Assign New Role</th>
+                <th className="p-5 font-medium">Status</th>
+                <th className="p-5 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -81,30 +82,58 @@ export default async function AdminDashboard() {
                   </td>
 
                   <td className="p-5">
-                    <form action={async (formData) => {
-                      'use server';
-                      await updateUserRole(user._id.toString(), formData.get('role') as string);
-                    }}>
-                      <div className="flex items-center gap-2">
-                        <select
-                          name="role"
-                          defaultValue={user.role}
-                          className="bg-gray-950 border border-gray-700 text-gray-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5"
-                        >
-                          <option value="user">User</option>
-                          <option value="editor">Editor</option>
-                          <option value="moderator">Moderator</option>
-                          <option value="sponsor">Sponsor</option>
-                          <option value="admin">Admin</option>
-                        </select>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.isVerified
+                      ? 'bg-green-900/30 text-green-200 border-green-800'
+                      : 'bg-yellow-900/30 text-yellow-200 border-yellow-800'
+                      }`}>
+                      {user.isVerified ? 'Verified' : 'Unverified'}
+                    </span>
+                  </td>
+
+                  <td className="p-5">
+                    <div className="flex flex-col gap-2">
+                      {/* Role Form */}
+                      <form action={async (formData) => {
+                        'use server';
+                        await updateUserRole(user._id.toString(), formData.get('role') as string);
+                      }}>
+                        <div className="flex items-center gap-2">
+                          <select
+                            name="role"
+                            defaultValue={user.role}
+                            className="bg-gray-950 border border-gray-700 text-gray-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2"
+                          >
+                            <option value="user">User</option>
+                            <option value="editor">Editor</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="sponsor">Sponsor</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                          <button
+                            type="submit"
+                            className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-colors"
+                          >
+                            Set Role
+                          </button>
+                        </div>
+                      </form>
+
+                      {/* Verification Form */}
+                      <form action={async () => {
+                        'use server';
+                        await toggleUserVerification(user._id.toString(), !user.isVerified);
+                      }}>
                         <button
                           type="submit"
-                          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-colors"
+                          className={`px-3 py-1.5 w-full rounded-lg text-xs font-bold border transition-colors ${user.isVerified
+                            ? 'border-red-800/50 text-red-400 hover:bg-red-900/20'
+                            : 'border-green-800/50 text-green-400 hover:bg-green-900/20'
+                            }`}
                         >
-                          Save
+                          {user.isVerified ? 'Revoke Verification' : 'Verify User'}
                         </button>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -9,10 +9,10 @@ import { revalidatePath } from "next/cache";
 async function checkAdminAuth() {
   const session = await getServerSession();
   if (!session || !session.user?.email) throw new Error("Unauthorized");
-  
+
   await connectDB();
   const currentUser = await User.findOne({ email: session.user.email });
-  
+
   if (currentUser?.role !== "admin") throw new Error("Forbidden: Admins only");
   return currentUser;
 }
@@ -21,7 +21,7 @@ async function checkAdminAuth() {
 export async function updateUserRole(userId: string, newRole: string) {
   try {
     await checkAdminAuth();
-    
+
     const validRoles = ["user", "editor", "moderator", "sponsor", "admin"];
     if (!validRoles.includes(newRole)) throw new Error("Invalid Role");
 
@@ -31,5 +31,19 @@ export async function updateUserRole(userId: string, newRole: string) {
   } catch (error) {
     console.error(error);
     return { success: false, error: "Failed to update role" };
+  }
+}
+
+// Action: Toggle User Verification Status
+export async function toggleUserVerification(userId: string, isVerified: boolean) {
+  try {
+    await checkAdminAuth();
+
+    await User.findByIdAndUpdate(userId, { isVerified, verifyToken: undefined, verifyTokenExpiry: undefined });
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Failed to update verification status" };
   }
 }
