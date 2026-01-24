@@ -5,6 +5,7 @@ import { Comment } from "@/models/Comment";
 import { getServerSession } from "next-auth";
 import CreatePostForm from "@/components/CreatePostForm";
 import PostCard from "@/components/PostCard";
+import WorldChat from "@/components/WorldChat";
 
 export const dynamic = 'force-dynamic';
 
@@ -89,6 +90,8 @@ export default async function FeedPage() {
                     );
                 })
             )}
+            {/* World Chat - Fixed Position */}
+            <WorldChat currentUser={currentUserDetails} />
         </main>
     );
 }

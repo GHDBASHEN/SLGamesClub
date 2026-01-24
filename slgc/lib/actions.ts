@@ -4,6 +4,7 @@ import { connectDB } from "./db";
 import { Post } from "@/models/Post";
 import { User } from "@/models/User";
 import { Comment } from "@/models/Comment";
+import { Message } from "@/models/Message";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 
@@ -137,4 +138,39 @@ export async function updateProfile(email: string, newBio: string, games: string
 
     await User.findOneAndUpdate({ email }, updateData);
     revalidatePath('/profile');
+}
+
+export async function sendChatMessage(content: string) {
+    await connectDB();
+    const session = await getServerSession();
+    if (!session || !session.user?.email) throw new Error("Unauthorized");
+
+    const user = await User.findOne({ email: session.user.email });
+
+    await Message.create({
+        content,
+        author: user._id
+    });
+    // No need to revalidate path if we are polling or using custom fetch in client
+}
+
+export async function getChatMessages() {
+    await connectDB();
+    const messages = await Message.find()
+        .populate('author', 'name image')
+        .sort({ createdAt: -1 }) // Newest first
+        .limit(50)
+        .lean();
+
+    // Reverse to show oldest first in chat window (bottom-up)
+    return messages.reverse().map((msg: any) => ({
+        _id: msg._id.toString(),
+        content: msg.content,
+        createdAt: msg.createdAt.toISOString(),
+        author: {
+            name: msg.author.name,
+            image: msg.author.image,
+            _id: msg.author._id.toString()
+        }
+    }));
 }
