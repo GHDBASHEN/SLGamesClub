@@ -28,9 +28,13 @@ export async function deletePost(postId: string) {
     revalidatePath('/');
 }
 
-export async function updateProfile(email: string, newBio: string, games: string) {
+export async function updateProfile(email: string, newBio: string, games: string, image?: string) {
     await connectDB();
     const gamesArray = games.split(',').map(g => g.trim());
-    await User.findOneAndUpdate({ email }, { bio: newBio, gamesPlayed: gamesArray });
+
+    const updateData: any = { bio: newBio, gamesPlayed: gamesArray };
+    if (image) updateData.image = image;
+
+    await User.findOneAndUpdate({ email }, updateData);
     revalidatePath('/profile');
 }

@@ -52,6 +52,7 @@ export default async function ProfilePage() {
                     <EditProfileForm
                         currentBio={user.bio}
                         currentGames={user.gamesPlayed}
+                        currentImage={user.image}
                         email={user.email}
                     />
                 </div>
