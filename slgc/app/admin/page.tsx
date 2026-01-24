@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
   // 1. Protect the Page
   const session = await getServerSession();
   if (!session) redirect("/login");
-  
+
   await connectDB();
   const currentUser = await User.findOne({ email: session.user?.email });
   if (currentUser?.role !== 'admin') redirect("/");
@@ -21,6 +21,26 @@ export default async function AdminDashboard() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">User Role Management</h1>
         <p className="text-gray-400 mb-8">Assign roles to control platform access.</p>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <h3 className="text-gray-400 text-sm uppercase font-bold">Total Users</h3>
+            <p className="text-3xl font-bold text-white mt-2">{users.length}</p>
+          </div>
+          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <h3 className="text-sky-400 text-sm uppercase font-bold">Admins</h3>
+            <p className="text-3xl font-bold text-white mt-2">{users.filter(u => u.role === 'admin').length}</p>
+          </div>
+          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <h3 className="text-orange-400 text-sm uppercase font-bold">Moderators</h3>
+            <p className="text-3xl font-bold text-white mt-2">{users.filter(u => u.role === 'moderator').length}</p>
+          </div>
+          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <h3 className="text-indigo-400 text-sm uppercase font-bold">Editors</h3>
+            <p className="text-3xl font-bold text-white mt-2">{users.filter(u => u.role === 'editor').length}</p>
+          </div>
+        </div>
 
         <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden shadow-2xl">
           <table className="w-full text-left border-collapse">
@@ -36,9 +56,9 @@ export default async function AdminDashboard() {
                 <tr key={user._id} className="hover:bg-gray-800/50 transition-colors">
                   <td className="p-5">
                     <div className="flex items-center gap-3">
-                      <img 
-                        src={user.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=User"} 
-                        className="w-10 h-10 rounded-full bg-gray-700" 
+                      <img
+                        src={user.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=User"}
+                        className="w-10 h-10 rounded-full bg-gray-700"
                         alt={user.name}
                       />
                       <div>
@@ -47,7 +67,7 @@ export default async function AdminDashboard() {
                       </div>
                     </div>
                   </td>
-                  
+
                   <td className="p-5">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
                       ${user.role === 'admin' ? 'bg-red-900/30 text-red-200 border-red-800' : ''}
@@ -66,8 +86,8 @@ export default async function AdminDashboard() {
                       await updateUserRole(user._id.toString(), formData.get('role') as string);
                     }}>
                       <div className="flex items-center gap-2">
-                        <select 
-                          name="role" 
+                        <select
+                          name="role"
                           defaultValue={user.role}
                           className="bg-gray-950 border border-gray-700 text-gray-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5"
                         >
@@ -77,8 +97,8 @@ export default async function AdminDashboard() {
                           <option value="sponsor">Sponsor</option>
                           <option value="admin">Admin</option>
                         </select>
-                        <button 
-                          type="submit" 
+                        <button
+                          type="submit"
                           className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-colors"
                         >
                           Save

@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Post } from "@/models/Post";
 import EditProfileForm from "@/components/EditProfileForm";
-import { FaGamepad, FaTrophy } from "react-icons/fa"; 
+import { FaGamepad, FaTrophy, FaUserShield } from "react-icons/fa";
 
 export default async function ProfilePage() {
     // 1. Verify Session
@@ -76,6 +76,24 @@ export default async function ProfilePage() {
                             </div>
                         </div>
                     </aside>
+
+                    {/* Admin Zone: Only Visible to Admins */}
+                    {user.role === 'admin' && (
+                        <div className="md:col-span-3 bg-gradient-to-r from-red-900/40 to-orange-900/40 border border-red-500/30 p-6 rounded-xl flex justify-between items-center">
+                            <div>
+                                <h2 className="text-xl font-bold text-red-100 flex items-center gap-2">
+                                    <FaUserShield className="text-red-400" /> Admin Command Center
+                                </h2>
+                                <p className="text-red-200/70 text-sm mt-1">Manage users, tournaments, and platform settings.</p>
+                            </div>
+                            <a
+                                href="/admin"
+                                className="bg-red-600 hover:bg-red-500 text-white px-5 py-2.5 rounded-lg font-bold text-sm transition shadow-lg shadow-red-900/20"
+                            >
+                                Open Dashboard
+                            </a>
+                        </div>
+                    )}
 
                     {/* Right Section: Activity Feed */}
                     <section className="md:col-span-2 space-y-4">
