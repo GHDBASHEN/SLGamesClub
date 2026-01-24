@@ -67,7 +67,13 @@ export default function TournamentForm() {
                     ) : (
                         <CldUploadWidget
                             uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "profile-pics-slgameclub"}
-                            onSuccess={(result: any) => setImageUrl(result.info.secure_url)}
+                            onSuccess={(result: any) => {
+                                setImageUrl(result.info.secure_url);
+                                document.body.style.overflow = "auto";
+                            }}
+                            onClose={() => {
+                                document.body.style.overflow = "auto";
+                            }}
                         >
                             {({ open }) => (
                                 <button type="button" onClick={() => open()} className="flex flex-col items-center gap-2 text-gray-400 hover:text-white transition">
