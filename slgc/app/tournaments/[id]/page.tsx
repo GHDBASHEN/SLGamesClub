@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { Tournament } from "@/models/Tournament";
+import { DeleteTournamentButton, RemoveParticipantButton } from "@/components/TournamentAdminControls";
 import { getServerSession } from "next-auth";
 import { User } from "@/models/User";
 import { notFound, redirect } from "next/navigation";
@@ -109,12 +110,21 @@ export default async function TournamentDetailPage(props: { params: Promise<{ id
                         {tournament.participants.length > 0 ? (
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {tournament.participants.map((p: any) => (
-                                    <div key={p._id} className="flex items-center gap-3 bg-gray-800 p-3 rounded-xl border border-gray-700">
-                                        <img
-                                            src={p.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + p.name}
-                                            className="w-10 h-10 rounded-full bg-gray-700 object-cover"
-                                        />
-                                        <span className="font-bold text-gray-200 truncate">{p.name}</span>
+                                    <div key={p._id} className="flex items-center justify-between bg-gray-800 p-3 rounded-xl border border-gray-700">
+                                        <div className="flex items-center gap-3">
+                                            <img
+                                                src={p.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + p.name}
+                                                className="w-10 h-10 rounded-full bg-gray-700 object-cover"
+                                            />
+                                            <span className="font-bold text-gray-200 truncate max-w-[100px] md:max-w-none">{p.name}</span>
+                                        </div>
+                                        {isOrganizer && (
+                                            <RemoveParticipantButton
+                                                tournamentId={tournament._id.toString()}
+                                                userId={p._id.toString()}
+                                                userName={p.name}
+                                            />
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -160,9 +170,9 @@ export default async function TournamentDetailPage(props: { params: Promise<{ id
                         {isOrganizer && (
                             <div className="mt-8 pt-8 border-t border-gray-800">
                                 <p className="text-gray-500 text-sm font-bold uppercase mb-4 text-center">Organizer Controls</p>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <button className="bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold">Edit</button>
-                                    <button className="bg-red-900/30 hover:bg-red-900/50 text-red-400 py-2 rounded-lg text-sm font-bold border border-red-900/50">Delete</button>
+                                <div className="grid grid-cols-1 gap-3">
+                                    <button className="bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold w-full">Edit Tournament</button>
+                                    <DeleteTournamentButton tournamentId={tournament._id.toString()} />
                                 </div>
                             </div>
                         )}

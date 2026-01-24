@@ -89,3 +89,26 @@ export async function deleteTournament(tournamentId: string) {
     await Tournament.findByIdAndDelete(tournamentId);
     revalidatePath('/tournaments');
 }
+
+export async function removeParticipant(tournamentId: string, userId: string) {
+    await connectDB();
+    const session = await getServerSession();
+    if (!session || !session.user?.email) throw new Error("Unauthorized");
+
+    const user = await User.findOne({ email: session.user.email });
+    const tournament = await Tournament.findById(tournamentId);
+
+    if (!tournament) throw new Error("Not found");
+
+    // Only Organizer or Admin can remove participants
+    if (tournament.organizer.toString() !== user._id.toString() && user.role !== 'admin') {
+        throw new Error("Forbidden");
+    }
+
+    await Tournament.findByIdAndUpdate(tournamentId, {
+        $pull: { participants: userId },
+        $inc: { registeredTeams: -1 }
+    });
+
+    revalidatePath(`/tournaments/${tournamentId}`);
+}
